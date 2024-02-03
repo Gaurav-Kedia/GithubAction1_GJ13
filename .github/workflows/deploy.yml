@@ -24,7 +24,10 @@ jobs:
       run: |
         # Add your deployment script or commands here
         mkdir GA1_GJ13
-        cd /home/ubuntu/GA1_GJ13
+        pwd
+        hostname
+        # Add a command to print the instance ID
+        curl http://169.254.169.254/latest/meta-data/instance-id -s
         git pull origin main
         
         ssh -i gj13-test-key.pem ubuntu@ec2-52-221-188-32.ap-southeast-1.compute.amazonaws.com
