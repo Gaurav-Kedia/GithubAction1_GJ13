@@ -24,4 +24,5 @@ jobs:
       run: |
         # Add your deployment script or commands here
         mkdir GA1_GJ13
+        pwd
         git pull origin main
