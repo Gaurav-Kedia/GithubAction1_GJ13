@@ -1,39 +1,26 @@
-name: Deploy to AWS
+name: Deploy to EC2
+
 on:
   push:
     branches:
-      - "main"
-env:
-  AWS_REGION: ap-south-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  PRIVATE_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
-  SERVER_PUBLIC_IP: ${{ secrets.AWS_PUBLIC_KEY }}
+      - main  # Change this to your main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: GithubAction1_GJ13
-          IMAGE_TAG: ${{ github.sha }}
-          AWS_DEFAULT_REGION: ap-southeast-1
-        with:
-          host: ${{ env.SERVER_PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ env.PRIVATE_SSH_KEY }}
-          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
-          script: |-
-            pwd
-            sudo apt update
-            sudo apt install awscli -y
-            sudo $(aws ecr get-login --no-include-email --region ap-southeast-1);
-            mkdir GA1_GJ13
-            cd /home/ubuntu/GA1_GJ13
-            git pull origin main
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa -H ${{ secrets.AWS_PUBLIC_KEY }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh ec2-user@${{ secrets.AWS_PUBLIC_KEY }} 'mkdir /home/ubuntu/GA1_GJ13 cd /home/ubuntu/GA1_GJ13 && git pull origin main'
+
