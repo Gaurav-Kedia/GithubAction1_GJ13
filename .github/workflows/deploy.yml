@@ -19,10 +19,9 @@ jobs:
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Deploy docker image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: aws-deploy
+          REPOSITORY: GithubAction1_GJ13
           IMAGE_TAG: ${{ github.sha }}
           AWS_DEFAULT_REGION: ap-southeast-1
         with:
