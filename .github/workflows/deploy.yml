@@ -23,4 +23,4 @@ jobs:
           ssh-keyscan -t rsa -H ${{ secrets.SERVER_PUBLIC_IP }} >> ~/.ssh/known_hosts
       - name: Deploy to EC2
         run: |
-          ssh -v -i ~/.ssh/id_rsa ubuntu@${{ secrets.SERVER_PUBLIC_IP }} 'pwd && cd /home/ubuntu/GA1_GJ13/GithubAction1_GJ13/ && pwd'
+          ssh -v -i ~/.ssh/id_rsa ubuntu@${{ secrets.SERVER_PUBLIC_IP }} 'pwd && cd /home/ubuntu/GA1_GJ13/GithubAction1_GJ13/ && pwd && ls -l'
